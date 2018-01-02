@@ -132,6 +132,7 @@ void AprilTagDetector::imageCb(const sensor_msgs::ImageConstPtr& msg, const sens
     tag_pose.pose.orientation.z = rot_quaternion.z();
     tag_pose.pose.orientation.w = rot_quaternion.w();
     tag_pose.header = cv_ptr->header;
+    tag_pose.header.stamp = ros::Time::now();
 
     AprilTagDetection tag_detection;
     tag_detection.pose = tag_pose;
@@ -142,6 +143,7 @@ void AprilTagDetector::imageCb(const sensor_msgs::ImageConstPtr& msg, const sens
 
     tf::Stamped<tf::Transform> tag_transform;
     tf::poseStampedMsgToTF(tag_pose, tag_transform);
+    //std::cout << "Sending apriltag detection relative to " << tag_transform.frame_id_ << std::endl;
     tf_pub_.sendTransform(tf::StampedTransform(tag_transform, tag_transform.stamp_, tag_transform.frame_id_, description.frame_name()));
   }
   detections_pub_.publish(tag_detection_array);

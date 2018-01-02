@@ -1,0 +1,31 @@
+<launch>
+    <arg name="image_topic" default="/rc_1/stereo/left/image_rect" />
+    <arg name="camera_info" default="/rc_1/stereo/left/camera_info" />
+    <arg name="camera_frame" default="rc_1_camera" />
+
+    <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+        <!-- Remap topic required by the node to custom topics -->
+        <remap from="image_rect" to="$(arg image_topic)" />
+        <remap from="camera_info" to="$(arg camera_info)" />
+
+        <!-- Optional: Subscribe to the compressed stream-->
+        <!--<param name="image_transport" type="str" value="compressed" />-->
+
+        <!-- Select the tag family: 16h5, 25h7, 25h9, 36h9, or 36h11(default) -->
+        <param name="tag_family" type="str" value="36h11" />
+
+        <!-- Enable projected optical measurements for more accurate tag transformations -->
+        <!-- This exists for backwards compatability and should be left true for new setups -->
+        <param name="projected_optics" type="bool" value="true" />
+
+        <!-- Set the frame name relative to which the position of the tags shall be published to tf -->
+        <param name="sensor_frame_id" value="$(arg camera_frame)" />
+
+        <!-- Describe the tags -->
+        <rosparam param="tag_descriptions">
+            [
+                {id: 42, size: 0.033, frame_id: game_board_tag}
+            ]
+        </rosparam>
+    </node>
+</launch>
